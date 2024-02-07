@@ -12,6 +12,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // globals
+struct boom_sign boom = {0, 0};
 pthread_mutex_t lvgl_mutex;
 atomic_int g_key = 0;
 atomic_int g_init_done = 0; // 0= init not done, 1= done, -1= dial/up/down pressed

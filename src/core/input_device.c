@@ -75,6 +75,17 @@ void tune_channel(uint8_t action) {
 
     LOGI("tune_channel:%d", action);
 
+    if (action == DIAL_KEY_UP) {
+        FILE *file = fopen(BOOM_FILE, "a");
+        if (file != NULL) {
+            struct timespec ts;
+            clock_gettime(CLOCK_MONOTONIC, &ts);
+            fprintf(file, "%d:boom:%d\n", boom.file_num, ts.tv_sec - boom.start_sec);
+            fclose(file);
+        }
+        return;
+    }
+
     if (tune_state == 0) {
         channel_osd_mode = 0;
         tune_state = 1;

@@ -8,6 +8,7 @@
 #include <log/log.h>
 #include <minIni.h>
 
+#include "common.hh"
 #include "core/msp_displayport.h"
 #include "core/settings.h"
 #include "driver/hardware.h"
@@ -164,17 +165,31 @@ void dvr_cmd(osd_dvr_cmd_t cmd) {
         start_rec = false;
     }
 
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
     if (start_rec) {
         if (!dvr_is_recording && g_sdcard_size >= 103) {
             dvr_update_record_conf();
             dvr_is_recording = true;
             system_script(REC_START);
+            boom.file_num++;
+            boom.start_sec = ts.tv_sec;
+            FILE *file = fopen(BOOM_FILE, "a");
+            if (file != NULL) {
+                fprintf(file, "%d:start\n", boom.file_num);
+                fclose(file);
+            }
             sleep(2); // wait for record process
         }
     } else {
         if (dvr_is_recording) {
             dvr_is_recording = false;
             system_script(REC_STOP);
+            FILE *file = fopen(BOOM_FILE, "a");
+            if (file != NULL) {
+                fprintf(file, "%d:end:%d\n", boom.file_num, ts.tv_sec - boom.start_sec);
+                fclose(file);
+            }
             sleep(2); // wait for record process
         }
     }

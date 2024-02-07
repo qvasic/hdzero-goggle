@@ -36,6 +36,12 @@ extern atomic_int g_key;
 extern atomic_int g_init_done;
 extern pthread_mutex_t lvgl_mutex;
 
+struct boom_sign {
+    int file_num;
+    time_t start_sec;
+};
+extern struct boom_sign boom;
+
 #ifdef __cplusplus
 }
 #endif
